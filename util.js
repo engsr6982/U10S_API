@@ -16,11 +16,7 @@ class Logger {
     Yellow: "\x1b[33m", // 黄色
   };
 
-  debug_ = false;
-
-  constructor(debug = false) {
-    this.debug_ = debug;
-  }
+  constructor() {}
 
   info(...args) {
     console.log("ℹ", this.ANSI_Colors.Green, ...args, this.ANSI_Colors.Reset);
