@@ -17,11 +17,7 @@ class U10S {
    * @returns {string}
    */
   getRequestBaseUrl(isGet = true) {
-    return `http://${this.host_}${
-      isGet
-        ? "/goform/goform_get_cmd_process"
-        : "/goform/goform_set_cmd_process"
-    }`;
+    return `http://${this.host_}${isGet ? "/goform/goform_get_cmd_process" : "/goform/goform_set_cmd_process"}`;
   }
 
   /**
@@ -29,10 +25,7 @@ class U10S {
    */
   async init() {
     logger.info("正在获取设备版本信息...");
-    const versions = await this.getDeviceParameter(
-      "cr_version",
-      "wa_inner_version"
-    );
+    const versions = await this.getDeviceParameter("cr_version", "wa_inner_version");
     this.softwareVersion_ = versions.wa_inner_version;
     this.internalVersion_ = versions.cr_version;
     logger.info(`设备软件版本: ${this.softwareVersion_}`);

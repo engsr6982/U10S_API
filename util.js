@@ -5,11 +5,7 @@ const querystring = require("querystring");
  * 计算 SHA256
  */
 function sha256(data) {
-  return require("crypto")
-    .createHash("sha256")
-    .update(data)
-    .digest("hex")
-    .toLocaleUpperCase();
+  return require("crypto").createHash("sha256").update(data).digest("hex").toLocaleUpperCase();
 }
 
 class Logger {
@@ -90,8 +86,7 @@ class http {
         method: method,
         headers: {
           Accept: "application/json, text/plain, */*",
-          "User-Agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
           ...headers,
         },
         timeout: timeout,
@@ -115,9 +110,7 @@ class http {
           if (res.statusCode >= 200 && res.statusCode < 300) {
             resolve(rawData);
           } else {
-            reject(
-              new Error(`请求失败，状态码: ${res.statusCode}, 响应: ${rawData}`)
-            );
+            reject(new Error(`请求失败，状态码: ${res.statusCode}, 响应: ${rawData}`));
           }
         });
       });
