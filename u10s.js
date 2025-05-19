@@ -3,18 +3,9 @@ const { http, sha256, logger } = require("./util");
 class U10S {
   /** @type {string} 设备地址 */ host_;
   /** @type {boolean} 设备是否登陆 */ isLogin_ = false;
-  /** @type {string} 设备内部版本 */ internalVersion_; // cr_version
-  /** @type {string} 设备软件版本 */ softwareVersion_; // wa_inner_version
 
   constructor(host) {
     this.host_ = host;
-    this._initialize();
-  }
-
-  async _initialize() {
-    const versions = await this.getDeviceParameter("cr_version", "wa_inner_version");
-    this.softwareVersion_ = versions.wa_inner_version;
-    this.internalVersion_ = versions.cr_version;
   }
 
   /**
@@ -29,16 +20,16 @@ class U10S {
    * 获取设备软件版本
    * @returns {string}
    */
-  getSoftwareVersion() {
-    return this.softwareVersion_;
+  async getSoftwareVersion() {
+    return await this.getDeviceParameter("wa_inner_version");
   }
 
   /**
    * 获取设备内部版本
    * @returns {string}
    */
-  getInternalVersion() {
-    return this.internalVersion_;
+  async getInternalVersion() {
+    return await this.getDeviceParameter("cr_version");
   }
 
   /**
@@ -105,7 +96,9 @@ class U10S {
    * @returns {Promise<boolean>}
    */
   async logout() {
-    const deviceId = sha256(this.softwareVersion_ + this.internalVersion_); // 设备ID
+    const soft = await this.getSoftwareVersion();
+    const internal = await this.getInternalVersion();
+    const deviceId = sha256(soft + internal); // 设备ID
 
     const RD = await this.getDeviceParameter("RD");
     const AD = sha256(deviceId + RD);

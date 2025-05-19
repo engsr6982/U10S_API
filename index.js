@@ -46,6 +46,13 @@ const getBatteryImpl = async () => {
 };
 
 async function main() {
+  u10s.getSoftwareVersion().then((res) => {
+    logger.info(`设备软件版本: ${res}`);
+  });
+  u10s.getInternalVersion().then((res) => {
+    logger.info(`设备内部版本: ${res}`);
+  });
+
   await loginImpl();
   await getBatteryImpl();
   await logoutImpl();
