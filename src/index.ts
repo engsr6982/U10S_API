@@ -1,5 +1,5 @@
-const U10S = require("./u10s");
-const { logger } = require("./util");
+import { U10S } from "./u10s.js";
+import { logger } from "./util.js";
 
 const u10s = new U10S("192.168.0.1");
 

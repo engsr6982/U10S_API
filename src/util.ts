@@ -1,11 +1,12 @@
-const http_ = require("http");
-const querystring = require("querystring");
+import * as http_ from "http";
+import * as querystring from "querystring";
+import * as crypto from "crypto";
 
 /**
  * 计算 SHA256
  */
-function sha256(data) {
-  return require("crypto").createHash("sha256").update(data).digest("hex").toLocaleUpperCase();
+export function sha256(data: string) {
+  return crypto.createHash("sha256").update(data).digest("hex").toLocaleUpperCase();
 }
 
 class Logger {
@@ -18,51 +19,51 @@ class Logger {
 
   constructor() {}
 
-  info(...args) {
+  info(...args: unknown[]) {
     console.log("ℹ", this.ANSI_Colors.Green, ...args, this.ANSI_Colors.Reset);
   }
 
-  warn(...args) {
+  warn(...args: unknown[]) {
     console.log("⚠", this.ANSI_Colors.Yellow, ...args, this.ANSI_Colors.Reset);
   }
 
-  error(...args) {
+  error(...args: unknown[]) {
     console.log("❌", this.ANSI_Colors.Red, ...args, this.ANSI_Colors.Reset);
   }
 }
-const logger = new Logger();
+export const logger = new Logger();
 
-class http {
+export class http {
   constructor() {
     throw new Error("This is a static class");
   }
 
   /**
    * 发起 HTTP GET 请求
-   * @param {string} url 请求地址(例如: http://192.168.0.1)
-   * @param {object} query 请求参数
-   * @param {object} headers 请求头
-   * @param {number} timeout 超时时间
-   * @returns {Promise<string>} 响应内容
+   * @param url 请求地址(例如: http://192.168.0.1)
+   * @param query 请求参数
+   * @param headers 请求头
+   * @param timeout 超时时间
+   * @returns 响应内容
    */
-  static get(url, query = {}, headers = {}, timeout = 10000) {
+  static get(url: string, query = {}, headers = {}, timeout = 10000): Promise<string> {
     const urlWithQuery = this.buildUrlWithQuery(url, query);
-    return this._request(urlWithQuery, "GET", null, headers, timeout);
+    return this._request(urlWithQuery, "GET", null, headers, timeout) as Promise<string>;
   }
 
   /**
    * 发起 HTTP POST 请求
-   * @param {string} url 请求地址
-   * @param {object} data 请求参数
-   * @param {object} headers 请求头
-   * @param {number} timeout 超时时间
-   * @returns {Promise<string>} 响应内容
+   * @param url 请求地址
+   * @param data 请求参数
+   * @param headers 请求头
+   * @param timeout 超时时间
+   * @returns 响应内容
    */
-  static post(url, data = null, headers = {}, timeout = 10000) {
-    return this._request(url, "POST", data, headers, timeout);
+  static post(url: string, data: object | null = null, headers = {}, timeout = 10000): Promise<string> {
+    return this._request(url, "POST", data, headers, timeout) as Promise<string>;
   }
 
-  static buildUrlWithQuery(url, query) {
+  static buildUrlWithQuery(url: string, query: object) {
     const urlObj = new URL(url);
     Object.entries(query).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
@@ -72,10 +73,10 @@ class http {
     return urlObj.toString();
   }
 
-  static _request(url, method, data, headers, timeout) {
+  static _request(url: string, method: "GET" | "POST", data: object | null, headers: object, timeout: number) {
     return new Promise((resolve, reject) => {
       const url_ = new URL(url);
-      const options = {
+      const options: http_.RequestOptions = {
         hostname: url_.hostname,
         port: url_.port || 80,
         path: url_.pathname + url_.search,
@@ -91,8 +92,14 @@ class http {
 
       let postData = null;
       if (method === "POST" && data) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         postData = querystring.stringify(data);
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         options.headers["Content-Type"] = "application/x-www-form-urlencoded";
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         options.headers["Content-Length"] = Buffer.byteLength(postData);
       }
 
@@ -103,6 +110,8 @@ class http {
           rawData += chunk;
         });
         res.on("end", () => {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           if (res.statusCode >= 200 && res.statusCode < 300) {
             resolve(rawData);
           } else {
@@ -128,5 +137,3 @@ class http {
     });
   }
 }
-
-module.exports = { sha256, logger, http };
